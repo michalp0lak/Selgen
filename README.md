@@ -1,0 +1,1 @@
+<h1>Foobar Foobar is a Python library for dealing with word pluralization. ## Installation Use the package manager <a href="https://pip.pypa.io/en/stable/">pip</a> to install foobar. <code>bash pip install foobar</code></h1>
