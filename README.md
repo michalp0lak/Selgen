@@ -22,4 +22,15 @@ These instructions will get you a copy of the project up and running on your loc
    - *etalon_path* as *your/project/path/selgenvir/Lib/site-packages/Selgen-master/etalon.mat*
 3. Navigate *Anaconda prompt* terminal to *your/project/path/selgenvir/Lib/site-packages/Selgen-master*
 4. In *Anaconda prompt* terminal execute analysis with `python selgen_execution.py`
-###Output of analysis
+### Output of analysis
+- all results are located in *path* from **selgen_global.py** file
+- in *contoured_images* folder are original images with drawed contours of active biomass
+- in *processed* folder are images, which were sucessfully processed
+- in *unprocessed* folder are images, which were not processed because of som e error
+- in *batch_output.xlsx* are structured results of evaluated batch
+  - **biomass** column is value of statistic = segmented pixels of plant in given area
+  - **day** column is number of experiment day
+  - **side** column specify tray side
+  - **location** column indicates location in given tray side
+  - **variant** column specify treatment/variant
+  ## Analysis description
