@@ -8,3 +8,5 @@ These instructions will get you a copy of the project up and running on your loc
 1. As a first download python version **3.6.X** [on python official website](https://www.python.org/downloads/) and install python by following instructions for example [on this website](https://realpython.com/installing-python/#windows)
 2. Download *Anaconda Data Science platform* from [official website](https://www.anaconda.com/distribution/#windows), Python **3.X** version and follow installation instructions [https://docs.anaconda.com/anaconda/install/windows/](https://docs.anaconda.com/anaconda/install/windows/)
 ### Installing
+1. As a first python **virtualenv** package is needed. Open *Anaconda prompt* terminal and execute `pip install virtualenv`
+2. Continue with *Anaconda prompt* terminal and create folder were your project will be located, execute command `mkdir your/path/....` and navigate terminal into this folder `cd your/path/....`
