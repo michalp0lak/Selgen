@@ -130,11 +130,12 @@ def half_split(image):
 
 
 
-def find_cross_mask(image):
+def find_cross_mask(image, etalon_path):
 
     assert (type(image) == np.ndarray) & (len(image.shape) == 3) & np.amin(image) >= 0 & np.amax(image) <= 255, 'Input data has to be RGB image'
-    
-    pattern = scipy.io.loadmat('C:/Users/polami05/Coding/Repositories/Selgen/etalon.mat')
+    assert (type(etalon_path) == str) and (os.path.exists(etalon_path)), 'Path to bucket storage credentials json file is not valid'
+
+    pattern = scipy.io.loadmat(etalon_path)
 
     cross_pattern = pattern['krizek']
     
@@ -293,8 +294,8 @@ def process_selgen_image(image):
     
     left_part, right_part = half_split(roi)
     
-    left_part_mask = find_cross_mask(left_part)
-    right_part_mask = find_cross_mask(right_part)
+    left_part_mask = find_cross_mask(left_part, selgen_global.etalon_path)
+    right_part_mask = find_cross_mask(right_part, selgen_global.etalon_path)
 
     left_part_row, left_part_col = get_cross_grid(left_part_mask, 'left')
     right_part_row, right_part_col = get_cross_grid(right_part_mask, 'right')
@@ -325,9 +326,6 @@ def segmentation_biomass(image, lower_thresh, upper_thresh):
 
 
 def paint_active_biomass(image, lower_thresh, upper_thresh):
-    
-    import cv2
-    import numpy as np
 
     assert (type(image) == np.ndarray) & (len(image.shape) == 3) & np.amin(image) >= 0 & np.amax(image) <= 255, 'Input data has to be RGB image'
 
@@ -353,6 +351,12 @@ def evaluate_selgen_batch(path):
     
     if not os.path.exists(path + 'contoured_images/'):
         os.makedirs(path + 'contoured_images/')
+
+    if not os.path.exists(path + 'processed/'):
+        os.makedirs(path + 'processed/')
+
+    if not os.path.exists(path + 'unprocessed/'):
+        os.makedirs(path + 'unprocessed/')
          
     formats = ('.JPG','.jpg','.PNG','.png','.bmp','.BMP','.TIFF','.tiff','.TIF','.tif')
     files = [file for file in os.listdir(path) if file.endswith(formats)]
@@ -360,36 +364,40 @@ def evaluate_selgen_batch(path):
         
     for file in files:
         
-        try:
+        #try:
     
-            image = cv2.imread(path+file)
+        image = cv2.imread(path+file)
 
-            contoured_image = paint_active_biomass(image, selgen_global.lower_thresh, selgen_global.upper_thresh)
+        contoured_image = paint_active_biomass(image, selgen_global.lower_thresh, selgen_global.upper_thresh)
 
-            cv2.imwrite(path + 'contoured_images/' + file, contoured_image)
+        cv2.imwrite(path + 'contoured_images/' + file, contoured_image)
 
-            areas = process_selgen_image(image)
+        areas = process_selgen_image(image)
 
-            for area in areas:
-                
-                biomass = segmentation_biomass(area.cropped_area, selgen_global.lower_thresh, selgen_global.upper_thresh)
-
-                info  = file.split('.')
-                regex = re.match('(^\d+)([a-z])', info[0])
-                day = regex.group(1)  
-                variant = regex.group(2)
-                
-                side = area.side
-                location = area.location
-
-                data.append(dict(zip(('variant','day','side','location','biomass'),(variant, day, side, location, biomass))))
+        for area in areas:
             
-            print('{} was succesfully processed'.format(file))
+            biomass = segmentation_biomass(area.cropped_area, selgen_global.lower_thresh, selgen_global.upper_thresh)
 
-        except Exception as e:
+            info  = file.split('.')
+            regex = re.match('(^\d+)([a-z])', info[0])
+            day = regex.group(1)  
+            variant = regex.group(2)
             
-            print('{} wasn\'t succesfully processed because of:')
-            print(e)
+            side = area.side
+            location = area.location
+
+            data.append(dict(zip(('variant','day','side','location','biomass'),(variant, day, side, location, biomass))))
+        
+        cv2.imwrite(path + 'processed/' + file, image)
+        os.remove(path+file)
+        print('{} was succesfully processed'.format(file))
+
+        # #except Exception as e:
+            
+        #     cv2.imwrite(path + 'unprocessed/' + file, image)
+        #     os.remove(path+file)
+        #     print('{} wasn\'t succesfully processed because of:')
+        #     print(e)
                 
                 
     df = pd.DataFrame(data)
