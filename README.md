@@ -15,3 +15,11 @@ These instructions will get you a copy of the project up and running on your loc
 5. Unzip downloaded zip file to *your/project/path/selgenvir/Lib/site-packages/*
 6. Navigate *Anaconda prompt* terminal to project folder with `cd your/project/path/....`. Activate virtual enviroment with `selgenvir\Scripts\activate`
 7. Navigate *Anaconda prompt* terminal to *your/project/path/selgenvir/Lib/site-packages/Selgen-master* folder. Install project requirements `pip install selgen_requirements.txt`
+## Execution of analysis
+1. Create folder with images from experiment for processing
+2. Setup project **global variables**. In folder *your/project/path/selgenvir/Lib/site-packages/Selgen-master* open file **selgen_global.py** in some text editor and define:
+   - *path* as directory of folder from *step 1*
+   - *etalon_path* as *your/project/path/selgenvir/Lib/site-packages/Selgen-master/etalon.mat*
+3. Navigate *Anaconda prompt* terminal to *your/project/path/selgenvir/Lib/site-packages/Selgen-master*
+4. In *Anaconda prompt* terminal execute analysis with `python selgen_execution.py`
+###Output of analysis
