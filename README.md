@@ -1,11 +1,11 @@
 # Selgen software for
 
-##Authors
+## Authors
 Michal Polak [1], Jan Humplik [1]
 
 [1] Palacky Univ, Fac Sci, Dept Chemical Biology & Genetics, Olomouc 77900, Czech Republic
 
-##Description
+## Description
 The software is designed to evaluate batch of image generated with Selgen experimental design.
 Single image contains two trays of 10x8 holes. This is region of interest (ROI) for further analysis.
 In first step ROI is cropped from the image.
