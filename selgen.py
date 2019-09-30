@@ -164,22 +164,23 @@ def get_cross_grid(image, side):
     assert side in ('left','right'), 'Side argument is string left or right'
 
     h,w = image.shape
-    
+
     image[0:130,:] = 0
     image[h-130:h,:] = 0
 
     if(side == 'left'):
-        
+
         image[:,0:150] = 0
         image[:,w-100:w] = 0
-        
+
     if(side == 'right'):
-        
+
         image[:,0:100] = 0
         image[:,w-150:w] = 0
-    
-    rows = np.sum(image, axis = 0)
-    cols = np.sum(image, axis = 1)
+
+    rows = np.sum(image, axis = 1)
+    cols = np.sum(image, axis = 0)
+
     row_indexes = []
     col_indexes = []
 
@@ -188,74 +189,75 @@ def get_cross_grid(image, side):
 
     for i in range(0,7):
 
-        index = np.argmax(rows)
-        
-        row_indexes.append(index)
+        index = np.argmax(cols)
+
+        col_indexes.append(index)
         not_indexes = list(np.linspace(index-80,index+80,161))
 
         for it in not_indexes:
             if(0 <= int(it) <= w-1):
-                rows[int(it)] = min(rows)
+                cols[int(it)] = min(cols)
 
 
     for j in range(0,9):
 
-        index = np.argmax(cols)
+        index = np.argmax(rows)
 
-        col_indexes.append(index)
-        not_indexes = list(np.linspace(index-80,index+80,1651))
+        row_indexes.append(index)
+        not_indexes = list(np.linspace(index-80,index+80,161))
 
         for it in not_indexes:
             if(0 <= int(it) <= h-1):
-                cols[int(it)] = min(cols)
-       
+                rows[int(it)] = min(rows)
+
     row_indexes.sort()
     col_indexes.sort()
-    
+
     r_sum = 0
     c_sum = 0
-    
+
     for i in range(1,len(row_indexes)):
-        
+
         r_sum = r_sum + (row_indexes[i] - row_indexes[i-1])   
-    
+
     for j in range(1,len(col_indexes)):    
-    
-        c_sum = c_sum + (col_indexes[i] - col_indexes[i-1]) 
-        
-        
+
+        c_sum = c_sum + (col_indexes[j] - col_indexes[j-1]) 
+
+
     r_shift = r_sum //  (len(row_indexes)-1)   
     c_shift = c_sum //  (len(col_indexes)-1)
-    
+
     min_r = row_indexes[0]-r_shift
     max_r = row_indexes[len(row_indexes)-1]+r_shift
-    
+
     min_c = col_indexes[0]-c_shift
     max_c = col_indexes[len(col_indexes)-1]+c_shift
-    
-    
+
+
     min_r = max(0,min_r)
     max_r = min(max_r,w)
-    
+
     min_c = max(0,min_c)
     max_c = min(max_c,h)
-    
+
     row_indexes.append(min_r)
     row_indexes.append(max_r)
-    
+
     col_indexes.append(min_c)
     col_indexes.append(max_c)
 
+
     row_indexes.sort()
     col_indexes.sort() 
-    
-    coll_indexes = []
-    
-    for l in range (0,len(col_indexes),2):
-        
-        coll_indexes.append(col_indexes[l])
-        
-    return row_indexes,coll_indexes
+
+    roww_indexes = []
+
+    for l in range (0,len(row_indexes),2):
+
+        roww_indexes.append(row_indexes[l])
+     
+    return roww_indexes,col_indexes
 
 
 def split_tray(image,side,row_indexes,col_indexes):
@@ -269,18 +271,20 @@ def split_tray(image,side,row_indexes,col_indexes):
     
     class area():
     
-        def __init__(self, side, location, cropped_area):
+        def __init__(self, side, row, column, cropped_area, size):
         
             self.side = side
-            self.location = location
+            self.row = row
+            self.column = column
             self.cropped_area = cropped_area
+            self.size = size
             
     for i in range(0,len(row_indexes)-1):
         for j in range(0,len(col_indexes)-1):
 
 
-            cropped_area = image[col_indexes[j]:col_indexes[j+1],row_indexes[i]:row_indexes[i+1],:]
-            area_ = area(side,(i,j),cropped_area)
+            cropped_area = image[row_indexes[i]:row_indexes[i+1],col_indexes[j]:col_indexes[j+1],:]
+            area_ = area(side,i,j,cropped_area,cropped_area.shape[0:2])
             areas.append(area_)
             
     return areas
@@ -352,11 +356,11 @@ def evaluate_selgen_batch(path):
     if not os.path.exists(path + 'contoured_images/'):
         os.makedirs(path + 'contoured_images/')
 
-    if not os.path.exists(path + 'processed/'):
-        os.makedirs(path + 'processed/')
+    #if not os.path.exists(path + 'processed/'):
+        #os.makedirs(path + 'processed/')
 
-    if not os.path.exists(path + 'unprocessed/'):
-        os.makedirs(path + 'unprocessed/')
+    #if not os.path.exists(path + 'unprocessed/'):
+        #os.makedirs(path + 'unprocessed/')
          
     formats = ('.JPG','.jpg','.PNG','.png','.bmp','.BMP','.TIFF','.tiff','.TIF','.tif')
     files = [file for file in os.listdir(path) if file.endswith(formats)]
@@ -384,12 +388,14 @@ def evaluate_selgen_batch(path):
             variant = regex.group(2)
             
             side = area.side
-            location = area.location
+            row = area.row
+            column = area.column
+            size = area.size
 
-            data.append(dict(zip(('variant','day','side','location','biomass'),(variant, day, side, location, biomass))))
+            data.append(dict(zip(('variant','day','side','row', 'column','biomass', 'size'),(variant, day, side, row, column, biomass, size))))
         
-        cv2.imwrite(path + 'processed/' + file, image)
-        os.remove(path+file)
+        #cv2.imwrite(path + 'processed/' + file, image)
+        #os.remove(path+file)
         print('{} was succesfully processed'.format(file))
 
         # #except Exception as e:
