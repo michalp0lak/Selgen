@@ -7,9 +7,13 @@ Michal Polak [1], Jan Humplik [1]
 
 ## Description
 The software is designed to evaluate batch of image generated with Selgen experimental design.
+
 Single image contains two trays of 10x8 holes. This is region of interest (ROI) for further analysis.
+
 In first step ROI is cropped from the image.
+
 Second step is a separtion of trays, so it can be evaluated individually.
+
 Each tray is grid of 10x8 holes. In third step coordinates of this grid is found.
 
 ### Getting started
