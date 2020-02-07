@@ -63,65 +63,25 @@ def half_split(image):
   
     hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
     h,w = hsv.shape[0:2]
-   
-    lower_1 = np.array([0,0,50])
-    upper_1 = np.array([50,255,180])
+  
+    hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
+    h,w = hsv.shape[0:2]
 
-    mask_1 = cv2.inRange(hsv, lower_1, upper_1)
-    mask_1 = (mask_1==0).astype('uint8') * 255
+    lower = np.array([0,0,20])
+    upper = np.array([250,100,150])
 
-    mask_1[0:200,:]=0
-    mask_1[h-200:h,:]=0
-    mask_1[:,0:1200]=255
-    mask_1[:,w-1200:w]=255
-    
-    mask_1 = (mask_1 > 0).astype('uint8')
-    proj_1 = np.sum(mask_1, axis = 0)
-    index_1  =  np.argmin(proj_1)
-    
-    lower_2 = np.array([0,0,20])
-    upper_2 = np.array([250,100,150])
-    
-    mask_2 = cv2.inRange(hsv, lower_2, upper_2)
-    mask_2 = (mask_2==0).astype('uint8') * 255
+    mask = cv2.inRange(hsv, lower, upper)
+    mask = (mask==0).astype('uint8')
 
 
-    mask_2[0:200,:]=0
-    mask_2[h-200:h,:]=0
-    mask_2[:,0:1200]=255
-    mask_2[:,w-1200:w]=255
+    mask[0:200,:]=0
+    mask[h-200:h,:]=0
+    mask[:,0:1200]=1
+    mask[:,w-1200:w]=1
 
-    mask_2 = (mask_2 > 0).astype('uint8')
-    proj_2 = np.sum(mask_2, axis = 0)
-    index_2  =  np.argmin(proj_2)
-    
-    mask = mask_1 * mask_2 
-    
+    mask = (mask > 0).astype('uint8')
     proj = np.sum(mask, axis = 0)
-    
-    index = np.argmin(proj)
-    
-    if(hsv.sum() < 1000000000 &  0 < proj_1[index_1] < 300):
-        
-        index = index_1
-    
-    if(hsv.sum() > 1000000000 &  0 < proj_2[index_2] < 300):
-        
-        index = index_2   
-    
-    else:
-        
-        if(proj_1[index_1] < proj_2[index_2] < 500):
-            
-            index = index_2
-        
-        if(500 > proj_1[index_1] > proj_2[index_2]):
-            
-            index = index_1
-    
-    index_cor = np.argmin(proj)
-    
-    index = (index + index_cor) // 2
+    index  =  np.round(np.mean(np.argpartition(proj, 30)[:30]),-1).astype('uint16')
     
     left = image[:, 0:index, :]
     right = image[:, index:image.shape[1], :]
@@ -236,10 +196,10 @@ def get_cross_grid(image, side):
 
 
     min_r = max(0,min_r)
-    max_r = min(max_r,w)
+    max_r = min(max_r,h)
 
     min_c = max(0,min_c)
-    max_c = min(max_c,h)
+    max_c = min(max_c,w)
 
     row_indexes.append(min_r)
     row_indexes.append(max_r)
@@ -307,7 +267,9 @@ def process_selgen_image(image):
     left_part_areas = split_tray(left_part,'left', left_part_row, left_part_col)
     right_part_areas = split_tray(right_part,'right', right_part_row, right_part_col)    
     
-    areas = [*left_part_areas, *right_part_areas]
+    roi_coords = (min(left_part_row[0], right_part_row[0]), max(left_part_row[len(left_part_row)-1], right_part_row[len(right_part_row)-1]) ,left_part_col[0], right_part_col[len(left_part_col)-1])
+
+    areas = [*left_part_areas, *right_part_areas], roi_coords
     
     return areas
 
@@ -356,11 +318,9 @@ def evaluate_selgen_batch(path):
     if not os.path.exists(path + 'contoured_images/'):
         os.makedirs(path + 'contoured_images/')
 
-    #if not os.path.exists(path + 'processed/'):
-        #os.makedirs(path + 'processed/')
 
-    #if not os.path.exists(path + 'unprocessed/'):
-        #os.makedirs(path + 'unprocessed/')
+    if not os.path.exists(path + 'failed/'):
+        os.makedirs(path + 'failed/')
          
     formats = ('.JPG','.jpg','.PNG','.png','.bmp','.BMP','.TIFF','.tiff','.TIF','.tif')
     files = [file for file in os.listdir(path) if file.endswith(formats)]
@@ -368,43 +328,41 @@ def evaluate_selgen_batch(path):
         
     for file in files:
         
-        #try:
+        try:
     
-        image = cv2.imread(path+file)
+            image = cv2.imread(path+file)
 
-        contoured_image = paint_active_biomass(image, selgen_global.lower_thresh, selgen_global.upper_thresh)
+            areas, roi_coords = process_selgen_image(image)
 
-        cv2.imwrite(path + 'contoured_images/' + file, contoured_image)
+            roi = image[roi_coords[0]:roi_coords[1],roi_coords[2]:roi_coords[3],:]
 
-        areas = process_selgen_image(image)
+            contoured_image = paint_active_biomass(roi, selgen_global.lower_thresh, selgen_global.upper_thresh)
 
-        for area in areas:
-            
-            biomass = segmentation_biomass(area.cropped_area, selgen_global.lower_thresh, selgen_global.upper_thresh)
+            cv2.imwrite(path + 'contoured_images/' + file, contoured_image)
 
-            info  = file.split('.')
-            regex = re.match('(^\d+)([a-z])', info[0])
-            day = regex.group(1)  
-            variant = regex.group(2)
-            
-            side = area.side
-            row = area.row
-            column = area.column
-            size = area.size
-
-            data.append(dict(zip(('variant','day','side','row', 'column','biomass', 'size'),(variant, day, side, row, column, biomass, size))))
-        
-        #cv2.imwrite(path + 'processed/' + file, image)
-        #os.remove(path+file)
-        print('{} was succesfully processed'.format(file))
-
-        # #except Exception as e:
-            
-        #     cv2.imwrite(path + 'unprocessed/' + file, image)
-        #     os.remove(path+file)
-        #     print('{} wasn\'t succesfully processed because of:')
-        #     print(e)
+            for area in areas:
                 
+                biomass = segmentation_biomass(area.cropped_area, selgen_global.lower_thresh, selgen_global.upper_thresh)
+
+                info  = file.split('.')
+                regex = re.match('(^\d+)([a-z])', info[0])
+                day = regex.group(1)  
+                variant = regex.group(2)
+                
+                side = area.side
+                row = area.row
+                column = area.column
+                size = area.size
+
+                data.append(dict(zip(('variant','day','side','row', 'column','biomass', 'size'),(variant, day, side, row, column, biomass, size))))
+            
+            print('{} was succesfully processed'.format(file))
+
+        except Exception as e:
+            
+            cv2.imwrite(path + 'failed/' + file, image)
+
+            raise e
                 
     df = pd.DataFrame(data)
-    df.to_excel(path + 'batch_output.xlsx')
+    df.to_excel(path + 'contoured_images/' + 'batch_output.xlsx')
