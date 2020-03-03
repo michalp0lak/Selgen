@@ -86,11 +86,11 @@ def half_split(image):
     left = image[:, 0:index, :]
     right = image[:, index:image.shape[1], :]
 
-    return left, right
+    return left, right, index
 
 
 
-def find_cross_mask(image, etalon_path):
+def find_cross_mask(image, etalon_path, side):
 
     assert (type(image) == np.ndarray) & (len(image.shape) == 3) & np.amin(image) >= 0 & np.amax(image) <= 255, 'Input data has to be RGB image'
     assert (type(etalon_path) == str) and (os.path.exists(etalon_path)), 'Path to bucket storage credentials json file is not valid'
@@ -98,6 +98,17 @@ def find_cross_mask(image, etalon_path):
     pattern = scipy.io.loadmat(etalon_path)
 
     cross_pattern = pattern['krizek']
+
+    image[0:50,:,:] = 0
+    image[image.shape[0]-50:image.shape[0],:,:] = 0
+    
+    if(side == 'right'):
+        
+        image[:,image.shape[1]-50:image.shape[1],:] = 0
+        
+    if(side == 'left'):
+        
+        image[:,0:50,:] = 0
     
     hsv = cv2.cvtColor(image.copy(), cv2.COLOR_BGR2HSV)
     
@@ -112,8 +123,17 @@ def find_cross_mask(image, etalon_path):
     cross_mask = scipy.ndimage.correlate(ROI_thresholded, cross_pattern, mode='nearest')
     
     cross_mask = cross_mask * background_mask
+
+    #if(side == 'right'):
+        
+        #cross_mask[:,50:130] = 0
+        
+    #if(side == 'left'):
+        
+        #cross_mask[:,cross_mask.shape[1]-130:cross_mask.shape[1]-50] = 0
     
     return cross_mask
+
 
 
 def get_cross_grid(image, side):
@@ -256,22 +276,38 @@ def process_selgen_image(image):
     
     roi = crop_ROI(image)
     
-    left_part, right_part = half_split(roi)
+    left_part, right_part, index = half_split(roi)
     
-    left_part_mask = find_cross_mask(left_part, selgen_global.etalon_path)
-    right_part_mask = find_cross_mask(right_part, selgen_global.etalon_path)
+    left_part_mask = find_cross_mask(left_part, selgen_global.etalon_path, 'left')
+    right_part_mask = find_cross_mask(right_part, selgen_global.etalon_path, 'right')
 
     left_part_row, left_part_col = get_cross_grid(left_part_mask, 'left')
     right_part_row, right_part_col = get_cross_grid(right_part_mask, 'right')
    
     left_part_areas = split_tray(left_part,'left', left_part_row, left_part_col)
     right_part_areas = split_tray(right_part,'right', right_part_row, right_part_col)    
-    
-    roi_coords = (min(left_part_row[0], right_part_row[0]), max(left_part_row[len(left_part_row)-1], right_part_row[len(right_part_row)-1]) ,left_part_col[0], right_part_col[len(left_part_col)-1])
 
-    areas = [*left_part_areas, *right_part_areas], roi_coords
+    for line in left_part_row:
+
+        cv2.line(roi, (left_part_col[0], line), (left_part_col[-1], line), (255,0,0), 2)
+
+    for line in left_part_col:
+
+        cv2.line(roi, (line, left_part_row[0]), (line, left_part_row[-1]), (255,0,0), 2)
+
+    for line in right_part_row:
+
+        cv2.line(roi, (right_part_col[0]+index, line), (right_part_col[-1]+index, line), (255,0,0), 2)
+
+    for line in right_part_col:
+
+        line = line + index
+        cv2.line(roi, (line, right_part_row[0]), (line, right_part_row[-1]), (255,0,0), 2)
+       
+
+    areas = [*left_part_areas, *right_part_areas]
     
-    return areas
+    return areas, roi
 
 
 def segmentation_biomass(image, lower_thresh, upper_thresh):
@@ -295,10 +331,8 @@ def paint_active_biomass(image, lower_thresh, upper_thresh):
 
     assert (type(image) == np.ndarray) & (len(image.shape) == 3) & np.amin(image) >= 0 & np.amax(image) <= 255, 'Input data has to be RGB image'
 
-    
-    ROI = crop_ROI(image)
 
-    hsv = cv2.cvtColor(ROI.copy(), cv2.COLOR_BGR2HSV)
+    hsv = cv2.cvtColor(image.copy(), cv2.COLOR_BGR2HSV)
 
     mask = cv2.inRange(hsv, lower_thresh, upper_thresh)
     mask = (mask>0).astype('uint8') * 255
@@ -306,9 +340,9 @@ def paint_active_biomass(image, lower_thresh, upper_thresh):
 
     ret,cnts,jj = cv2.findContours(mask, cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_SIMPLE)
 
-    cv2.drawContours(ROI, cnts, -1, (0, 0, 255), 1)
+    cv2.drawContours(image, cnts, -1, (0, 0, 255), 1)
 
-    return ROI
+    return image
 
 
 def evaluate_selgen_batch(path):
@@ -332,9 +366,7 @@ def evaluate_selgen_batch(path):
     
             image = cv2.imread(path+file)
 
-            areas, roi_coords = process_selgen_image(image)
-
-            roi = image[roi_coords[0]:roi_coords[1],roi_coords[2]:roi_coords[3],:]
+            areas, roi = process_selgen_image(image)
 
             contoured_image = paint_active_biomass(roi, selgen_global.lower_thresh, selgen_global.upper_thresh)
 
@@ -345,16 +377,17 @@ def evaluate_selgen_batch(path):
                 biomass = segmentation_biomass(area.cropped_area, selgen_global.lower_thresh, selgen_global.upper_thresh)
 
                 info  = file.split('.')
-                regex = re.match('(^\d+)([a-z])', info[0])
-                day = regex.group(1)  
-                variant = regex.group(2)
+                #regex = re.match('(^\d+)([a-z])', info[0])
+                #day = regex.group(1)  
+                #variant = regex.group(2)
+                variant = info[0]
                 
                 side = area.side
                 row = area.row
                 column = area.column
                 size = area.size
 
-                data.append(dict(zip(('variant','day','side','row', 'column','biomass', 'size'),(variant, day, side, row, column, biomass, size))))
+                data.append(dict(zip(('variant','side','row', 'column','biomass', 'size'),(variant, side, row, column, biomass, size))))
             
             print('{} was succesfully processed'.format(file))
 
@@ -362,7 +395,61 @@ def evaluate_selgen_batch(path):
             
             cv2.imwrite(path + 'failed/' + file, image)
 
-            raise e
+            #raise e
                 
     df = pd.DataFrame(data)
     df.to_excel(path + 'contoured_images/' + 'batch_output.xlsx')
+
+
+
+if __name__ == '__main__':
+
+    assert os.path.exists(selgen_global.path) , 'path should navigate into the folder where batch of images are stored'
+    
+    if not os.path.exists(selgen_global.path + 'contoured_images/'):
+        os.makedirs(selgen_global.path + 'contoured_images/')
+ 
+         
+    formats = ('.JPG','.jpg','.PNG','.png','.bmp','.BMP','.TIFF','.tiff','.TIF','.tif')
+    files = [file for file in os.listdir(selgen_global.path) if file.endswith(formats)]
+    data = [] 
+
+    f = open(output_path + "failures.txt","w+")  
+        
+    for file in files:
+        
+        try:
+    
+            image = cv2.imread(selgen_global.path+file)
+
+            areas, roi = process_selgen_image(image)
+
+            contoured_image = paint_active_biomass(roi, selgen_global.lower_thresh, selgen_global.upper_thresh)
+
+            cv2.imwrite(selgen_global.path + 'contoured_images/' + file, contoured_image)
+
+            for area in areas:
+                
+                biomass = segmentation_biomass(area.cropped_area, selgen_global.lower_thresh, selgen_global.upper_thresh)
+
+                info  = file.split('.')
+                #regex = re.match('(^\d+)([a-z])', info[0])
+                #day = regex.group(1)  
+                #variant = regex.group(2)
+                variant = info[0]
+                
+                side = area.side
+                row = area.row
+                column = area.column
+                size = area.size
+
+                data.append(dict(zip(('variant','side','row', 'column','biomass', 'size'),(variant, side, row, column, biomass, size))))
+            
+            print('{} was succesfully processed'.format(file))
+
+        except Exception as e:
+
+            f.write(file + ': \t' + e + '\n')
+                
+    df = pd.DataFrame(data)
+    df.to_excel(selgen_global.path + 'contoured_images/' + 'batch_output.xlsx')
