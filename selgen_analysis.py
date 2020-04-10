@@ -338,7 +338,7 @@ def paint_active_biomass(image, lower_thresh, upper_thresh):
     mask = (mask>0).astype('uint8') * 255
     mask = cv2.Canny(mask,100,200)
 
-    ret,cnts,jj = cv2.findContours(mask, cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_SIMPLE)
+    cnts, __ = cv2.findContours(mask, cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_SIMPLE)
 
     cv2.drawContours(image, cnts, -1, (0, 0, 255), 1)
 
@@ -376,18 +376,17 @@ def evaluate_selgen_batch(path):
                 
                 biomass = segmentation_biomass(area.cropped_area, selgen_global.lower_thresh, selgen_global.upper_thresh)
 
-                info  = file.split('.')
-                #regex = re.match('(^\d+)([a-z])', info[0])
-                #day = regex.group(1)  
-                #variant = regex.group(2)
+                info  = file.split('.')[0].split('_')
+
                 variant = info[0]
-                
+                date = info[2]
+                time = info[4]
                 side = area.side
                 row = area.row
                 column = area.column
                 size = area.size
 
-                data.append(dict(zip(('variant','side','row', 'column','biomass', 'size'),(variant, side, row, column, biomass, size))))
+                data.append(dict(zip(('date','time','variant','side','row', 'column','biomass', 'size'),(date, time, variant, side, row, column, biomass, size))))
             
             print('{} was succesfully processed'.format(file))
 
@@ -414,7 +413,7 @@ if __name__ == '__main__':
     files = [file for file in os.listdir(selgen_global.path) if file.endswith(formats)]
     data = [] 
 
-    f = open(output_path + "failures.txt","w+")  
+    f = open(selgen_global.path + 'contoured_images/' + "failures.txt","w+")  
         
     for file in files:
         
@@ -432,24 +431,25 @@ if __name__ == '__main__':
                 
                 biomass = segmentation_biomass(area.cropped_area, selgen_global.lower_thresh, selgen_global.upper_thresh)
 
-                info  = file.split('.')
-                #regex = re.match('(^\d+)([a-z])', info[0])
-                #day = regex.group(1)  
-                #variant = regex.group(2)
+                info  = file.split('.')[0].split('_')
+                
                 variant = info[0]
+                date = info[2]
+                time = info[4]
                 
                 side = area.side
                 row = area.row
                 column = area.column
                 size = area.size
 
-                data.append(dict(zip(('variant','side','row', 'column','biomass', 'size'),(variant, side, row, column, biomass, size))))
+                data.append(dict(zip(('date','time','variant','side','row', 'column','biomass', 'size'),(date,time,variant, side, row, column, biomass, size))))
             
             print('{} was succesfully processed'.format(file))
 
         except Exception as e:
 
-            f.write(file + ': \t' + e + '\n')
+            print('{} processing failed'.format(file))
+            f.write(file + ': \t' + str(e) + '\n')
                 
     df = pd.DataFrame(data)
     df.to_excel(selgen_global.path + 'contoured_images/' + 'batch_output.xlsx')
