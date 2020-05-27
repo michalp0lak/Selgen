@@ -80,4 +80,4 @@ To obtain the files, please contact Michal Polak by email michal.polak@upol.cz.
 
 Your email must contain the following statement:
 
-"SOftware will not be used for any commercial purpose."
+"Software will not be used for any commercial purpose."
