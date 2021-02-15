@@ -38,7 +38,7 @@ Project is developed in **Python 3** programming language. At this moment I expe
 1. As a first python **virtualenv** package is required. Open *command-line interpreter (cmd.exe)* terminal and execute `py -m pip install --user virtualenv`
 2. In *cmd* terminal and create folder were your project will be located, execute command `mkdir your/project/path/....` and navigate terminal into this folder `cd your\project\path\....`
 3. Create python virtual enviroment with command `python -m venv selgen`
-4. Download zipped selgen project from github repository [https://github.com/UPOL-Plant-phenotyping-research-group/Selgen](https://github.com/UPOL-Plant-phenotyping-research-group/Selgen) with green button *Clone or download* and *Download ZIP* option.
+4. Download zipped selgen project from github repository [https://github.com/PolakMichalMLT/Selgen](https://github.com/PolakMichalMLT/Selgen) with green button *Clone or download* and *Download ZIP* option.
 5. Unzip downloaded zip file to *your/project/path/selgen/Lib/site-packages/*
 6. Navigate *cmd* terminal to project folder with `cd your\project\path\....`. Activate virtual enviroment with `.\selgen\Scripts\activate`
 7. Navigate *cmd* terminal to *your\project\path\selgen\Lib\site-packages\Selgen-master* folder. Install project requirements `pip install -r requirements.txt`
