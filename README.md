@@ -10,7 +10,7 @@ The software is designed to evaluate batch of images generated with Selgen exper
 
 Single image contains two trays of 10x8 holes. This is region of interest (ROI) for further analysis.
 
-The goal is to evaluate spatial and color pattern of plant in each cell. For experiment "green" pixels are valid. What is "green" can be defined by user in **global_variables.py** as a threshold for segmentation.
+The goal is to evaluate spatial and color pattern of plant in each cell. For experiment "green" pixels are valid. What is "green" can be defined by user in **global_variables.py** as a thresholds for segmentation.
 
 Software suppose various image formats jpg, png, bmp, tiff, tif as an input data.
 
@@ -26,31 +26,29 @@ Process of single image analysis follows these steps:
 
 
 ### Getting started
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. Project is not prepared for deployment in live system.
+These instructions will lead you to copy project and deeploy on your local machine for your use. 
 
 ### Platform
 Project is developed in **Python 3** programming language. At this moment I expect that analysis will be executed on server with *Windows10* OS. So at this moments all instructions stand for *Windows10* OS.
 
 ### Prerequisities
-1. As a first download python version **3.6.X** [on python official website](https://www.python.org/downloads/) and install python by following instructions for example [on this website](https://realpython.com/installing-python/#windows)
-2. Download *Anaconda Data Science platform* from [official website](https://www.anaconda.com/distribution/#windows), Python **3.X** version and follow installation instructions [https://docs.anaconda.com/anaconda/install/windows/](https://docs.anaconda.com/anaconda/install/windows/)
+1. As a first install Python up to date version (not older than **3.8.X**) from the Microsoft Store. Or download python [on python official website](https://www.python.org/downloads/) and install python by following instructions for example [on this website](https://realpython.com/installing-python/#windows).
 
 ### Deployment
-1. As a first python **virtualenv** package is needed. Open *Anaconda prompt* terminal and execute `pip install virtualenv`
-2. Continue with *Anaconda prompt* terminal and create folder were your project will be located, execute command `mkdir your/project/path/....` and navigate terminal into this folder `cd your/project/path/....`
-3. Create python virtual enviroment with command `virtualenv selgenvir`
-4. Download zipped selgen project from github repository [https://github.com/PolakMichalMLT/Selgen](https://github.com/PolakMichalMLT/Selgen) with green button *Clone or download* and *Download ZIP* option.
-5. Unzip downloaded zip file to *your/project/path/selgenvir/Lib/site-packages/*
-6. Navigate *Anaconda prompt* terminal to project folder with `cd your/project/path/....`. Activate virtual enviroment with `selgenvir\Scripts\activate`
-7. Navigate *Anaconda prompt* terminal to *your/project/path/selgenvir/Lib/site-packages/Selgen-master* folder. Install project requirements `pip install selgen_requirements.txt`
+1. As a first python **virtualenv** package is required. Open *command-line interpreter (cmd.exe)* terminal and execute `py -m pip install --user virtualenv`
+2. In *cmd* terminal and create folder were your project will be located, execute command `mkdir your/project/path/....` and navigate terminal into this folder `cd your\project\path\....`
+3. Create python virtual enviroment with command `python -m venv selgen`
+4. Download zipped selgen project from github repository [https://github.com/UPOL-Plant-phenotyping-research-group/Selgen](https://github.com/UPOL-Plant-phenotyping-research-group/Selgen) with green button *Clone or download* and *Download ZIP* option.
+5. Unzip downloaded zip file to *your/project/path/selgen/Lib/site-packages/*
+6. Navigate *cmd* terminal to project folder with `cd your\project\path\....`. Activate virtual enviroment with `.\selgen\Scripts\activate`
+7. Navigate *cmd* terminal to *your\project\path\selgen\Lib\site-packages\Selgen-master* folder. Install project requirements `pip install -r requirements.txt`
 
 ### Execution of analysis
-1. Create folder with images from experiment for processing
-2. Setup project **global variables**. In folder *your/project/path/selgenvir/Lib/site-packages/Selgen-master* open file **selgen_global.py** in some text editor and define:
+1. Create folder with images of experiment for processing
+2. Setup project **global variables**. In folder *your/project/path/selgen/Lib/site-packages/Selgen-master* open file **selgen_global.py** in some text editor and define:
    - *path* as directory of folder from *step 1*
-   - *etalon_path* as *your/project/path/selgenvir/Lib/site-packages/Selgen-master/etalon.mat*
-3. Navigate *Anaconda prompt* terminal to *your/project/path/selgenvir/Lib/site-packages/Selgen-master*
-4. In *Anaconda prompt* terminal execute analysis with `python selgen_execution.py`
+3. Navigate *cmd* terminal to *your\project\path\selgenvir\Lib\site-packages\Selgen-master*
+4. In *cmd* terminal execute analysis with `python selgen_analysis.py`
 
 #### Output of analysis
 - all results are located in *path* from **selgen_global.py** file
@@ -67,12 +65,12 @@ Project is developed in **Python 3** programming language. At this moment I expe
   - **size** is size of evaluated area
 
   
-## Obtaining the application, technical and legal terms:
-The application is written in Python.
+## Obtaining the software, technical and legal terms:
+The software is written in Python.
  
-The application can be used without any charge upon obtaining license from the author.
+The software can be used without any charge upon obtaining license from the author.
  
-The licence can be obtained obtained by e-mail upon agreeing not to use the application for commercial purpose.
+The licence can be obtained by e-mail upon agreeing not to use the software for commercial purpose.
 
 After obtaining the license, the end-user will be provided (free of charge) with the link of Github repository of the project.
 
