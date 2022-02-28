@@ -1,6 +1,7 @@
-method_benchmark.ipynb
-selgen_script.py
-__pycache__
+*.ipynb
+.python_version
 .vscode
-.python-version
-.DS_Store
+__pycache__
+selgen
+selgen-dev
+.DS_Store`
