@@ -1,28 +1,34 @@
-# Selgen software for
-
-## Authors
-Michal Polak [1], Jan Humplik [1]
-
-[1] Palacky Univ, Fac Sci, Dept Chemical Biology & Genetics, Olomouc 77900, Czech Republic
+# Selgen software for crop cold resistance analysis
 
 ## Description
-The software is designed to evaluate batch of images generated with Selgen experimental design. Core of the software is mainly using methods of OpenCV library.
+The software is designed to evaluate batch of images generated with experimental design of Selgen company. The software is coded in Python3 and mainly uses OpenCV library.
 
-Single image contains two trays of 10x8 holes. This is region of interest (ROI) for further analysis.
+Single image contains two trays (left and right) of 5x8 growing areas. This is region of interest (ROI) for further analysis.
 
 The goal is to evaluate spatial and color pattern of plant in each cell. For experiment "green" pixels are valid. What is "green" can be defined by user in **global_variables.py** as a thresholds for segmentation.
 
 Software suppose various image formats jpg, png, bmp, tiff, tif as an input data.
 
-The output of analysis is **xlsx** file described below and folder of raw images with painted contours around "green" pixels.
+The output of analysis is **xlsx** file described below and folder of raw images with painted trays grid and contours around crop.
+
+## Processing pipeline
+
+![alt text](https://github.com/PolakMichalMLT/Selgen//blob/main/readme_images/raw.png?raw=true)
 
 Process of single image analysis follows these steps:
+
 1. ROI is cropped from raw image
 2. Trays are separated into two ROIs (left and right)
 3. Mask of tray grid is segmented in each ROI
 4. Computation of grid for both trays
 5. Separation of trays into individual holes
 6. Computation of spatial and color pattern in each hole
+
+1. ROI is cropped from raw image
+![alt text](https://github.com/PolakMichalMLT/Selgen//blob/main/readme_images/raw.png?raw=true)
+
+2. Tray is splitted into 2 ROI areas (left and right)
+![alt text](https://github.com/PolakMichalMLT/Selgen//blob/main/readme_images/roi.png?raw=true)
 
 
 ### Getting started
