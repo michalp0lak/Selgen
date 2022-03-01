@@ -29,8 +29,11 @@ Process of single image analysis follows these steps:
 
 ![alt text](https://github.com/PolakMichalMLT/Selgen//blob/master/readme_images/left_part.png?raw=true)
 ![alt text](https://github.com/PolakMichalMLT/Selgen//blob/master/readme_images/right_part.png?raw=true)
+
 3. Mask of tray grid is segmented in each ROI
 
+![alt text](https://github.com/PolakMichalMLT/Selgen//blob/master/readme_images/left_part_mask.png?raw=true)
+![alt text](https://github.com/PolakMichalMLT/Selgen//blob/master/readme_images/right_part_mask.png?raw=true)
 
 ### Getting started
 These instructions will lead you to copy project and deeploy on your local machine for your use. 
