@@ -29,7 +29,7 @@ Process of single image analysis follows these steps:
 ![alt text](https://github.com/PolakMichalMLT/Selgen//blob/master/readme_images/split.png?raw=true)
 
 ![alt text](https://github.com/PolakMichalMLT/Selgen//blob/master/readme_images/left_part.png?raw=true)
-
+<img src="https://github.com/PolakMichalMLT/Selgen//blob/master/readme_images/left_part.png" width="250" height="400">
 ![alt text](https://github.com/PolakMichalMLT/Selgen//blob/master/readme_images/right_part.png?raw=true)
 
 3.
