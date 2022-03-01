@@ -17,7 +17,6 @@ The output of analysis is **xlsx** file described below and folder of raw images
 
 Process of single image analysis follows these steps:
 
-3. Mask of tray grid is segmented in each ROI
 4. Computation of grid for both trays
 5. Separation of trays into individual holes
 6. Computation of spatial and color pattern in each hole
@@ -30,9 +29,9 @@ Process of single image analysis follows these steps:
 
 ![alt text](https://github.com/PolakMichalMLT/Selgen//blob/master/readme_images/left_part.png?raw=true)
 ![alt text](https://github.com/PolakMichalMLT/Selgen//blob/master/readme_images/right_part.png?raw=true)
-<img src="hhttps://github.com/PolakMichalMLT/Selgen//blob/master/readme_images/left_part.png.type" width="50%" height="50%">
+<img src="https://github.com/PolakMichalMLT/Selgen//blob/master/readme_images/left_part.png" width="50%" height="50%">
 
-3.
+3. Mask of tray grid is segmented in each ROI
 
 
 ### Getting started
