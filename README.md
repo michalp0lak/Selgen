@@ -27,8 +27,8 @@ Process of single image analysis follows these steps:
 2. Tray is splitted into 2 ROI areas (left and right)
 ![alt text](https://github.com/PolakMichalMLT/Selgen//blob/master/readme_images/split.png?raw=true)
 
-<img src="https://github.com/PolakMichalMLT/Selgen//blob/master/readme_images/left_part.png" width="50%" height="50%">
-
+![alt text](https://github.com/PolakMichalMLT/Selgen//blob/master/readme_images/left_part.png?raw=true)
+![alt text](https://github.com/PolakMichalMLT/Selgen//blob/master/readme_images/right_part.png?raw=true)
 3. Mask of tray grid is segmented in each ROI
 
 
