@@ -53,7 +53,7 @@ Process of single image analysis follows these steps:
 
 
 ### Getting started
-These instructions will lead you to copy project and deeploy on your local machine for your use. 
+These instructions will show you to how copy project and deeploy it on your local machine. 
 
 ### Platform
 Project is developed in **Python 3** programming language. At this moment I expect that analysis will be executed on server with *Windows10* OS. So at this moments all instructions stand for *Windows10* OS.
@@ -90,19 +90,3 @@ Project is developed in **Python 3** programming language. At this moment I expe
   - **row** column indicates row in tray grid of evaluated area
   - **column** column indicates column in tray grid of evaluated area
   - **size** is size of evaluated area
-
-  
-## Obtaining the software, technical and legal terms:
-The software is written in Python.
- 
-The software can be used without any charge upon obtaining license from the author.
- 
-The licence can be obtained by e-mail upon agreeing not to use the software for commercial purpose.
-
-After obtaining the license, the end-user will be provided (free of charge) with the link of Github repository of the project.
-
-To obtain the files, please contact Michal Polak by email michal.polak@upol.cz.
-
-Your email must contain the following statement:
-
-"Software will not be used for any commercial purpose."
