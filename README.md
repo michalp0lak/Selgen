@@ -23,10 +23,10 @@ Process of single image analysis follows these steps:
 6. Computation of spatial and color pattern in each hole
 
 1. ROI is cropped from raw image
-![alt text](https://github.com/PolakMichalMLT/Selgen//blob/main/readme_images/roi.png?raw=true)
+![alt text](https://github.com/PolakMichalMLT/Selgen//blob/master/readme_images/roi.png?raw=true)
 
 2. Tray is splitted into 2 ROI areas (left and right)
-![alt text](https://github.com/PolakMichalMLT/Selgen//blob/main/readme_images/split.png?raw=true)
+![alt text](https://github.com/PolakMichalMLT/Selgen//blob/master/readme_images/split.png?raw=true)
 
 
 ### Getting started
