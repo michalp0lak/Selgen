@@ -17,14 +17,14 @@ The output of analysis is **xlsx** file described below and folder of raw images
 
 Process of single image analysis follows these steps:
 
-4. Computation of grid for both trays
-5. Separation of trays into individual holes
-6. Computation of spatial and color pattern in each hole
+![alt text](https://github.com/PolakMichalMLT/Selgen//blob/master/readme_images/raw.png?raw=true)
 
 1. ROI is cropped from raw image
+
 ![alt text](https://github.com/PolakMichalMLT/Selgen//blob/master/readme_images/roi.png?raw=true)
 
 2. Tray is splitted into 2 ROI areas (left and right)
+
 ![alt text](https://github.com/PolakMichalMLT/Selgen//blob/master/readme_images/split.png?raw=true)
 
 ![alt text](https://github.com/PolakMichalMLT/Selgen//blob/master/readme_images/left_part.png?raw=true)
@@ -34,6 +34,25 @@ Process of single image analysis follows these steps:
 
 ![alt text](https://github.com/PolakMichalMLT/Selgen//blob/master/readme_images/left_part_mask.png?raw=true)
 ![alt text](https://github.com/PolakMichalMLT/Selgen//blob/master/readme_images/right_part_mask.png?raw=true)
+
+4. Computation of ROI mask optimal rotation
+
+![alt text](https://github.com/PolakMichalMLT/Selgen//blob/master/readme_images/left_part_mask_rot.png?raw=true)
+
+5. Localization of ROI grid with fourier transform
+
+![alt text](https://github.com/PolakMichalMLT/Selgen//blob/master/readme_images/fourier.png?raw=true)
+
+6. ROI separation into growing areas
+
+![alt text](https://github.com/PolakMichalMLT/Selgen//blob/master/readme_images/left_part_mask_rot.png?raw=true)
+
+7. Computation of spatial and color pattern in each growing area
+
+![alt text](https://github.com/PolakMichalMLT/Selgen//blob/master/readme_images/final.png?raw=true)
+
+
+
 
 ### Getting started
 These instructions will lead you to copy project and deeploy on your local machine for your use. 
