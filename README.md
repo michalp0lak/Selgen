@@ -17,8 +17,6 @@ The output of analysis is **xlsx** file described below and folder of raw images
 
 Process of single image analysis follows these steps:
 
-![alt text](https://github.com/PolakMichalMLT/Selgen//blob/master/readme_images/raw.png?raw=true)
-
 1. ROI is cropped from raw image
 
 ![alt text](https://github.com/PolakMichalMLT/Selgen//blob/master/readme_images/roi.png?raw=true)
@@ -45,7 +43,7 @@ Process of single image analysis follows these steps:
 
 6. ROI separation into growing areas
 
-![alt text](https://github.com/PolakMichalMLT/Selgen//blob/master/readme_images/left_part_mask_rot.png?raw=true)
+![alt text](https://github.com/PolakMichalMLT/Selgen//blob/master/readme_images/left_part_mask_grid.png?raw=true)
 
 7. Computation of spatial and color pattern in each growing area
 
