@@ -13,22 +13,20 @@ The output of analysis is **xlsx** file described below and folder of raw images
 
 ## Processing pipeline
 
-![alt text](https://github.com/PolakMichalMLT/Selgen//blob/main/readme_images/raw.png?raw=true)
+![alt text](https://github.com/PolakMichalMLT/Selgen//blob/master/readme_images/raw.png?raw=true)
 
 Process of single image analysis follows these steps:
 
-1. ROI is cropped from raw image
-2. Trays are separated into two ROIs (left and right)
 3. Mask of tray grid is segmented in each ROI
 4. Computation of grid for both trays
 5. Separation of trays into individual holes
 6. Computation of spatial and color pattern in each hole
 
 1. ROI is cropped from raw image
-![alt text](https://github.com/PolakMichalMLT/Selgen//blob/main/readme_images/raw.png?raw=true)
+![alt text](https://github.com/PolakMichalMLT/Selgen//blob/main/readme_images/roi.png?raw=true)
 
 2. Tray is splitted into 2 ROI areas (left and right)
-![alt text](https://github.com/PolakMichalMLT/Selgen//blob/main/readme_images/roi.png?raw=true)
+![alt text](https://github.com/PolakMichalMLT/Selgen//blob/main/readme_images/split.png?raw=true)
 
 
 ### Getting started
